@@ -69,7 +69,11 @@ public class canvas extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //pbnImage.setImage(usrImg.getImage());
                 pbnImage.reset();
+                //pbnImage.blurImage();
                 pbnImage.thresholdImage(numValues.getValue());
+                //pbnImage.blurImage();
+                pbnImage.detectEdges();
+                //pbnImage.blurImage();
             }
         });
     }
