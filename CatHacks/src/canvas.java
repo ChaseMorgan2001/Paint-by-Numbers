@@ -51,8 +51,8 @@ public class canvas extends JFrame {
         controls.setBackground(bg);
         JSlider numValues = new JSlider();
         numValues.setMinimum(2);
-        numValues.setMaximum(15);
-        numValues.setValue(8);
+        numValues.setMaximum(25);
+        numValues.setValue(10);
         numValues.setPaintLabels(true);
         numValues.setPaintTicks(true);
         numValues.setMajorTickSpacing(1);
@@ -70,10 +70,20 @@ public class canvas extends JFrame {
                 //pbnImage.setImage(usrImg.getImage());
                 pbnImage.reset();
                 //pbnImage.thresholdImage(numValues.getValue());
+                pbnImage.setColors(numValues.getValue());
                 pbnImage.grayscaleImage();
-                pbnImage.posterize(numValues.getValue());
+               // pbnImage.blurImage();
+                pbnImage.thresholdImage(numValues.getValue());
+               /* if (numValues.getValue() < 6){
+                    pbnImage.thresholdImage(numValues.getValue());
+                }
+                else {
+                    pbnImage.posterize(numValues.getValue());
+                }
+
+
+                */
                 pbnImage.detectEdges();
-                //pbnImage.thresholdImage(2);
                 pbnImage.invertImage();
             }
         });
