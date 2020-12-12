@@ -4,15 +4,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class MyImageObj extends JLabel {
     private BufferedImage bim = null, og = null;
 
     private ArrayList<Color> colors;
 
-    MyImageObj(){ }
+    MyImageObj(){}
 
     public void setImage(BufferedImage img){
         if(img == null){
@@ -68,9 +67,9 @@ public class MyImageObj extends JLabel {
 
     public void detectEdges(){
         float[] edge = {
-                0.0f, -2.0f, 0.0f,
-                -2.0f, 8.0f, -2.0f,
-                0.0f, -2.0f, 0.0f
+                0, -1, 0,
+                -1, 4, -1,
+                0, -1, 0
         };
         BufferedImageOp op = new ConvolveOp(new Kernel(3,3,edge));
         BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
@@ -81,24 +80,27 @@ public class MyImageObj extends JLabel {
     }
 
     public void posterize(int i){
-        for(int y = 0; y < bim.getHeight(); y++){
-            for(int x = 0; x < bim.getWidth(); x++){
-                int pixel = bim.getRGB(x,y);
-                Color clr = new Color(pixel,true);
-                int red = clr.getRed(), blue = clr.getBlue(), green = clr.getGreen();
-                red = posterizeColor(i, red);
-                blue = posterizeColor(i,blue);
-                green = posterizeColor(i, green);
-                Color c = new Color(red,blue,green);
-                bim.setRGB(x,y,c.getRGB());
+        if(i/3 < 2){
+            thresholdImage(i);
+        } else {
+            for (int y = 0; y < bim.getHeight(); y++) {
+                for (int x = 0; x < bim.getWidth(); x++) {
+                    int pixel = bim.getRGB(x, y);
+                    Color clr = new Color(pixel, true);
+                    int red = clr.getRed(), blue = clr.getBlue(), green = clr.getGreen();
+                    red = posterizeColor(i, red);
+                    blue = posterizeColor(i, blue);
+                    green = posterizeColor(i, green);
+                    Color c = new Color(red, blue, green);
+                    bim.setRGB(x, y, c.getRGB());
+                }
             }
         }
-
         repaint();
     }
 
     public int posterizeColor(int colors, int currentColor){
-        double delta = 256/(double)(colors/3);
+        double delta = 256/colors;
         double val = delta;
         for(int j = 1; j < colors; j++){
             if(currentColor < val){
@@ -111,7 +113,6 @@ public class MyImageObj extends JLabel {
     }
 
     public void thresholdImage(int i){
-        //findColorSpace();
         int colorIndex = 0;
         for(int y = 0; y < bim.getHeight(); y++){
             for(int x = 0; x < bim.getWidth(); x++){
@@ -128,12 +129,11 @@ public class MyImageObj extends JLabel {
                     }
                 }
                 bim.setRGB(x,y,colors.get(colorIndex).getRGB());
-                //repaint();
             }
         }
-        //System.out.println("Done");
         repaint();
     }
+
     public void defineLines(){
         for (int x = 0; x < bim.getWidth(); x++) {
             for (int y = 0; y < bim.getHeight(); y++) {
@@ -145,7 +145,9 @@ public class MyImageObj extends JLabel {
                 bim.setRGB(x, y, col.getRGB());
             }
         }
+        repaint();
     }
+
     public void invertImage() {
         for (int x = 0; x < bim.getWidth(); x++) {
             for (int y = 0; y < bim.getHeight(); y++) {
@@ -154,11 +156,12 @@ public class MyImageObj extends JLabel {
                 col = new Color(255 - col.getRed(),
                         255 - col.getGreen(),
                         255 - col.getBlue());
-
                 bim.setRGB(x, y, col.getRGB());
             }
         }
+        repaint();
     }
+
     public void setColors(int i) {
         colors = getDominantColors(i);
         System.out.println(Color.YELLOW.getRed() + ", " + Color.YELLOW.getGreen() + ", " + Color.YELLOW.getBlue());
@@ -229,10 +232,8 @@ public class MyImageObj extends JLabel {
                     }
                 }
                 bim.setRGB(x,y,randomPallete[colorIndex].getRGB());
-                //repaint();
             }
         }
-        System.out.println("Done");
         repaint();
     }
 
@@ -247,7 +248,19 @@ public class MyImageObj extends JLabel {
                 bim.setRGB(x, y, col.getRGB());
             }
         }
+        repaint();
     }
+
+    public boolean isGray(Color col){
+        int epsilon = 15;
+        if(col.getRed() - col.getBlue() > epsilon || col.getRed() - col.getBlue() < -epsilon){
+            if(col.getRed() - col.getBlue() > epsilon || col.getRed() - col.getBlue() < -epsilon){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void reset(){
         setImage(og);
     }
