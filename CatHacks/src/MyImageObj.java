@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -77,9 +76,10 @@ public class MyImageObj extends JLabel {
                 0.111f, 0.111f, 0.111f
         };
         float[] gauss = {
-                0.077847f, 0.123317f, 0.077847f,
-                0.123317f, 0.195346f, 0.123317f,
-                0.077847f, 0.123317f, 0.077847f
+
+                0.024879f,	0.107973f,	0.024879f,
+                0.107973f,	0.468592f,	0.107973f,
+                0.024879f,	0.107973f,	0.024879f
         };
         BufferedImageOp op = new ConvolveOp(new Kernel(3,3,gauss));
         BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
@@ -91,9 +91,9 @@ public class MyImageObj extends JLabel {
 
     public void detectEdges(){
         float[] edge = {
-                0, -1, 0,
-                -1, 4, -1,
-                0, -1, 0
+                0f, -2f, 0f,
+                -2f, 8f, -2f,
+                0f, -2f, 0f
         };
         BufferedImageOp op = new ConvolveOp(new Kernel(3,3,edge));
         BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
@@ -124,10 +124,22 @@ public class MyImageObj extends JLabel {
                 //repaint();
             }
         }
-        System.out.println("Done");
+        //System.out.println("Done");
         repaint();
     }
 
+    public void invertImage() {
+        for (int x = 0; x < bim.getWidth(); x++) {
+            for (int y = 0; y < bim.getHeight(); y++) {
+                int rgba = bim.getRGB(x, y);
+                Color col = new Color(rgba, true);
+                col = new Color(255 - col.getRed(),
+                        255 - col.getGreen(),
+                        255 - col.getBlue());
+                bim.setRGB(x, y, col.getRGB());
+            }
+        }
+    }
     public void reset(){
         setImage(og);
     }
