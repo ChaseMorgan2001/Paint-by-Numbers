@@ -34,11 +34,11 @@ public class canvas extends JFrame {
         GridLayout gl = new GridLayout(1,2);
         gl.setHgap(200);
         imageBoard.setBackground(bg);
-        imageBoard.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight() - 50);
+        imageBoard.setSize((int) screenSize.getWidth(), usrImg.getHeight());
         imageBoard.setBorder(BorderFactory.createEmptyBorder(15,50,15,50));
         imageBoard.setLayout(gl);
-
         // add images to panel here
+
         imageBoard.add(usrImg);
         imageBoard.add(pbnImage);
     }
@@ -69,13 +69,11 @@ public class canvas extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //pbnImage.setImage(usrImg.getImage());
                 pbnImage.reset();
-                //pbnImage.blurImage();
-                pbnImage.thresholdImage(numValues.getValue());
-                //pbnImage.blurImage();
+                //pbnImage.thresholdImage(numValues.getValue());
+                pbnImage.grayscaleImage();
+                pbnImage.posterize(numValues.getValue());
                 pbnImage.detectEdges();
-                //pbnImage.blurImage();
-                pbnImage.thresholdImage(2);
-                //pbnImage.blurImage();
+                //pbnImage.thresholdImage(2);
                 pbnImage.invertImage();
             }
         });
