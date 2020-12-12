@@ -1,5 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +42,7 @@ public class canvas extends JFrame {
 
         // add images to panel here
         imageBoard.add(usrImg);
+        pbnImage.setPBN();
         imageBoard.add(pbnImage);
     }
     public void setControls(){
@@ -57,6 +60,11 @@ public class canvas extends JFrame {
         numValues.setPaintTicks(true);
         numValues.setMajorTickSpacing(1);
         numValues.setBackground(bg);
+        numValues.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+               pbnImage.setThreshVal(numValues.getValue());
+            }
+        });
         controls.add(numValues);
         JButton start = new JButton("Start");
         JPanel buttons = new JPanel();
