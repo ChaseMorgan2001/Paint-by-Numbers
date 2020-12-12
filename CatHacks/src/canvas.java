@@ -74,6 +74,9 @@ public class canvas extends JFrame {
                 //pbnImage.blurImage();
                 pbnImage.detectEdges();
                 //pbnImage.blurImage();
+                pbnImage.thresholdImage(2);
+                //pbnImage.blurImage();
+                pbnImage.invertImage();
             }
         });
     }
@@ -100,7 +103,7 @@ public class canvas extends JFrame {
                             pbnImage.setImage(image);
 
                             // resize the image
-                            if(usrImg.getImage().getWidth() < (screenSize.getWidth()/2) - 100){
+                            if(usrImg.getImage().getWidth() < (screenSize.getWidth()/2) - 100 || usrImg.getImage().getWidth() > (screenSize.getWidth()/2) - 100){
                                 double ratio = (screenSize.getWidth()/2 - 100 )/ usrImg.getImage().getWidth();
                                 //double ratio = usrImg.getImage().getWidth()/usrImg.getImage().getHeight();
                                 BufferedImage resizedImage = new BufferedImage((int)screenSize.getWidth()/2 - 100, (int)(usrImg.getImage().getHeight()*ratio), usrImg.getImage().getType());
