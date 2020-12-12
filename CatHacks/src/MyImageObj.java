@@ -1,11 +1,11 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class MyImageObj extends JLabel {
     private BufferedImage bim = null;
-
+    private boolean isPBN = false;
+    private int threshVal = 8;
     MyImageObj(){
 
     }
@@ -22,6 +22,9 @@ public class MyImageObj extends JLabel {
     public BufferedImage getImage(){
         return bim;
     }
+
+    public void setThreshVal(int val) { threshVal = val; }
+    public void setPBN() { isPBN = true; }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
