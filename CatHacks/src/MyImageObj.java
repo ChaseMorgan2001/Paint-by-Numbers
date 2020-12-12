@@ -179,8 +179,17 @@ public class MyImageObj extends JLabel {
                 int rgba = bim.getRGB(x, y);
                 Color col = new Color(rgba, true);
                 if (!colors.contains(col)){
-                    colors.add(col);
-                    howMuch.add(1);
+                    boolean diff = true;
+                    for(Color c : colors){
+                        if(!differentColors(c,col)){
+                            diff = false;
+                            col = c;
+                        }
+                    }
+                    if(diff){
+                        colors.add(col);
+                        howMuch.add(1);
+                    }
                 }
                 else {
                     int index = colors.indexOf(col);
@@ -188,17 +197,21 @@ public class MyImageObj extends JLabel {
                 }
             }
         }
-        int max = 0;
-        for (int n = 0; n < howMuch.size(); n++){
-            if (howMuch.get(n) > max){
-                max = howMuch.get(n);
+
+        for (int n = 0; n < i; n++){
+            int m = 0;
+            for(int k = 0; k < howMuch.size(); k++){
+                if(howMuch.get(k) > m){
+                    m = howMuch.get(k);
+                }
             }
-            if (mainColors.size() < i) {
-                mainColors.add(colors.get(howMuch.indexOf(max)));
-                colors.remove(howMuch.indexOf(max));
-                howMuch.remove((Integer) max);
+            if(howMuch.indexOf(m) != -1){
+                mainColors.add(colors.get(howMuch.indexOf(m)));
+                colors.remove(howMuch.indexOf(m));
+                howMuch.remove(howMuch.indexOf(m));
             }
         }
+        System.out.println("found main colors");
         return mainColors;
     }
 
@@ -223,7 +236,7 @@ public class MyImageObj extends JLabel {
                 int pixel = bim.getRGB(x,y);
                 Color clr = new Color(pixel,true);
                 int red = clr.getRed(), blue = clr.getBlue(), green = clr.getGreen();
-                for( int n = 0; n < Math.min(i, colors.size());n++){
+                for( int n = 0; n < Math.min(i, randomPallete.length);n++){
                     int j = (randomPallete[n].getRed() - red), k = (randomPallete[n].getBlue() - blue), m = (randomPallete[n].getGreen() - green);
                     double distance = Math.sqrt((j*j)+(k*k)+(m*m));
                     if(distance < min){
@@ -236,7 +249,7 @@ public class MyImageObj extends JLabel {
         }
         repaint();
     }
-
+    
     public void grayscaleImage(){
         for (int x = 0; x < bim.getWidth(); x++) {
             for (int y = 0; y < bim.getHeight(); y++) {
@@ -258,6 +271,18 @@ public class MyImageObj extends JLabel {
                 return false;
             }
         }
+        return true;
+    }
+
+    boolean differentColors(Color c1, Color c2){
+        int epsilon = 15;
+
+        int j = (c1.getRed() - c2.getRed()), k = (c1.getBlue() - c2.getBlue()), m = (c1.getGreen() - c2.getGreen());
+        double distance = Math.sqrt((j*j)+(k*k)+(m*m));
+        if(distance < epsilon){
+            return false;
+        }
+
         return true;
     }
 
