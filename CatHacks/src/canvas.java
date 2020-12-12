@@ -67,7 +67,9 @@ public class canvas extends JFrame {
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pbnImage.thresholdImage(3);
+                //pbnImage.setImage(usrImg.getImage());
+                pbnImage.reset();
+                pbnImage.thresholdImage(numValues.getValue());
             }
         });
     }
@@ -129,6 +131,9 @@ public class canvas extends JFrame {
         fileMenu.add(fileexit);
         bar.add(fileMenu);
     }
+
+
+
     public static void main(String[] args){
         canvas c = new canvas();
         c.addWindowListener(new WindowAdapter() {
