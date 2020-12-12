@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class MyImageObj extends JLabel {
-    private BufferedImage bim = null;
+    private BufferedImage bim = null, og = null;
 
     private Color[] colors = {
             Color.black,
@@ -32,6 +32,11 @@ public class MyImageObj extends JLabel {
         }
         bim = img;
 
+        og = new BufferedImage(bim.getWidth(),bim.getHeight(),bim.getType());
+        Graphics2D g2d = (Graphics2D) og.getGraphics();
+        g2d.drawImage(bim,0,0,bim.getWidth(), bim.getHeight(), null);
+        g2d.dispose();
+
         this.repaint();
     }
 
@@ -48,23 +53,23 @@ public class MyImageObj extends JLabel {
                 int pixel = bim.getRGB(x,y);
                 Color clr = new Color(pixel,true);
                 int red = clr.getRed(), blue = clr.getBlue(), green = clr.getGreen();
-                for( int n = 0; n < colors.length;n++){
+                for( int n = 0; n < Math.min(i, colors.length);n++){
                     int j = (colors[n].getRed() - red), k = (colors[n].getBlue() - blue), m = (colors[n].getGreen() - green);
                     double distance = Math.sqrt((j*j)+(k*k)+(m*m));
-                    System.out.println("distance: " + distance);
                     if(distance < min){
                         min = distance;
                         colorIndex = n;
-                        //System.out.println("Min: " + min);
                     }
                 }
-                //System.out.println("index: " + colorIndex);
-                //System.out.println("------------------");
                 bim.setRGB(x,y,colors[colorIndex].getRGB());
-
+                //repaint();
             }
         }
         repaint();
+    }
+
+    public void reset(){
+        setImage(og);
     }
 
     public void paintComponent(Graphics g){
