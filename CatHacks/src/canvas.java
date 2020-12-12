@@ -34,11 +34,11 @@ public class canvas extends JFrame {
         GridLayout gl = new GridLayout(1,2);
         gl.setHgap(200);
         imageBoard.setBackground(bg);
-        imageBoard.setSize((int) screenSize.getWidth(), usrImg.getHeight());
+        imageBoard.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight() - 50);
         imageBoard.setBorder(BorderFactory.createEmptyBorder(15,50,15,50));
         imageBoard.setLayout(gl);
-        // add images to panel here
 
+        // add images to panel here
         imageBoard.add(usrImg);
         imageBoard.add(pbnImage);
     }
@@ -51,7 +51,7 @@ public class canvas extends JFrame {
         controls.setBackground(bg);
         JSlider numValues = new JSlider();
         numValues.setMinimum(2);
-        numValues.setMaximum(15);
+        numValues.setMaximum(64);
         numValues.setValue(8);
         numValues.setPaintLabels(true);
         numValues.setPaintTicks(true);
@@ -59,9 +59,28 @@ public class canvas extends JFrame {
         numValues.setBackground(bg);
         controls.add(numValues);
         JButton start = new JButton("Start");
+        JButton blur = new JButton("Blur");
+        JButton sharpen = new JButton("Sharpen");
+        JButton grayScale = new JButton("Grayscale");
+        JButton detectEdges = new JButton("Edge Detection");
+        JButton posterize = new JButton("Posterize");
+        JButton threshold = new JButton("Threshold");
+        JButton randomThreshold = new JButton("Random Threshold");
+        JButton invertColors = new JButton("Invert Colors");
+        JButton reset = new JButton("Reset");
+
         JPanel buttons = new JPanel();
         buttons.setBackground(bg);
         buttons.add(start);
+        buttons.add(blur);
+        buttons.add(sharpen);
+        buttons.add(grayScale);
+        buttons.add(detectEdges);
+        buttons.add(posterize);
+        buttons.add(threshold);
+        buttons.add(randomThreshold);
+        buttons.add(invertColors);
+        buttons.add(reset);
         controls.add(buttons);
 
         start.addActionListener(new ActionListener() {
@@ -69,12 +88,67 @@ public class canvas extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //pbnImage.setImage(usrImg.getImage());
                 pbnImage.reset();
+                //pbnImage.randomThreshHold(numValues.getValue());
                 //pbnImage.thresholdImage(numValues.getValue());
-                pbnImage.grayscaleImage();
+                //pbnImage.grayscaleImage();
                 pbnImage.posterize(numValues.getValue());
-                pbnImage.detectEdges();
+                //pbnImage.detectEdges();
                 //pbnImage.thresholdImage(2);
+                //pbnImage.invertImage();
+            }
+        });
+        blur.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.blurImage();
+            }
+        });
+        sharpen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.sharpen();
+            }
+        });
+        grayScale.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.grayscaleImage();
+            }
+        });
+        detectEdges.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.detectEdges();
+            }
+        });
+        posterize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.posterize(numValues.getValue());
+            }
+        });
+        threshold.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.thresholdImage(numValues.getValue());
+            }
+        });
+        randomThreshold.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.randomThreshHold(numValues.getValue());
+            }
+        });
+        invertColors.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 pbnImage.invertImage();
+            }
+        });
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pbnImage.reset();
             }
         });
     }
