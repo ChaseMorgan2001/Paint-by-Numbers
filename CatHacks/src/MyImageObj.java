@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.util.ArrayList;
 
 public class MyImageObj extends JLabel {
     private BufferedImage bim = null, og = null;
@@ -24,6 +25,8 @@ public class MyImageObj extends JLabel {
             Color.magenta,
             Color.pink
     };
+
+    //private ArrayList<Color> colors = new ArrayList<Color>();
 
     MyImageObj(){
 
@@ -47,6 +50,26 @@ public class MyImageObj extends JLabel {
         return bim;
     }
 
+    public void findColorSpace(){
+
+        for(int y = 0; y < bim.getHeight(); y++){
+            for(int x = 0; x < bim.getWidth(); x++){
+                boolean insert = true;
+                int pixel = bim.getRGB(x,y);
+                Color clr = new Color(pixel,true);
+                int red = clr.getRed(), blue = clr.getBlue(), green = clr.getGreen();
+                for( int n = 0; n < colors.length;n++){
+                    if(colors[n] == clr){
+                        insert = false;
+                    }
+                }
+                if(insert){
+                    //colors.add(clr);
+                }
+            }
+        }
+    }
+
     public void blurImage(){
         float[] matrix = {
                 0.111f, 0.111f, 0.111f,
@@ -54,11 +77,26 @@ public class MyImageObj extends JLabel {
                 0.111f, 0.111f, 0.111f
         };
         float[] gauss = {
-                0.077847f, 0.123317f, 0.077847f,
-                0.123317f, 0.195346f, 0.123317f,
-                0.077847f, 0.123317f, 0.077847f
+
+                0.024879f,	0.107973f,	0.024879f,
+                0.107973f,	0.468592f,	0.107973f,
+                0.024879f,	0.107973f,	0.024879f
         };
         BufferedImageOp op = new ConvolveOp(new Kernel(3,3,gauss));
+        BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
+        op.filter(bim,temp);
+        bim = temp;
+
+        repaint();
+    }
+
+    public void detectEdges(){
+        float[] edge = {
+                0.0f, -2.0f, 0.0f,
+                -2.0f, 8.0f, -2.0f,
+                0.0f, -2.0f, 0.0f
+        };
+        BufferedImageOp op = new ConvolveOp(new Kernel(3,3,edge));
         BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
         op.filter(bim,temp);
         bim = temp;
@@ -96,21 +134,8 @@ public class MyImageObj extends JLabel {
         return 255;
     }
 
-    public void detectEdges(){
-        float[] edge = {
-                0, -1, 0,
-                -1, 4, -1,
-                0, -1, 0
-        };
-        BufferedImageOp op = new ConvolveOp(new Kernel(3,3,edge));
-        BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
-        op.filter(bim,temp);
-        bim = temp;
-
-        repaint();
-    }
-
     public void thresholdImage(int i){
+        //findColorSpace();
         int colorIndex = 0;
         for(int y = 0; y < bim.getHeight(); y++){
             for(int x = 0; x < bim.getWidth(); x++){
@@ -130,7 +155,7 @@ public class MyImageObj extends JLabel {
                 //repaint();
             }
         }
-        System.out.println("Done");
+        //System.out.println("Done");
         repaint();
     }
 
@@ -142,11 +167,26 @@ public class MyImageObj extends JLabel {
                 col = new Color(255 - col.getRed(),
                         255 - col.getGreen(),
                         255 - col.getBlue());
+                if (col.getRGB() != Color.WHITE.getRGB()){
+                    col = Color.black;
+                }
                 bim.setRGB(x, y, col.getRGB());
             }
         }
     }
 
+    public void grayscaleImage(){
+        for (int x = 0; x < bim.getWidth(); x++) {
+            for (int y = 0; y < bim.getHeight(); y++) {
+                int rgba = bim.getRGB(x, y);
+                Color col = new Color(rgba, true);
+                int red = col.getRed(), blue = col.getBlue(), green = col.getGreen();
+                int avg = (red + blue + green) /3;
+                col = new Color(avg, avg, avg);
+                bim.setRGB(x, y, col.getRGB());
+            }
+        }
+    }
     public void reset(){
         setImage(og);
     }
@@ -157,5 +197,17 @@ public class MyImageObj extends JLabel {
         g.clearRect(0,0,getWidth(),getHeight());
 
         big.drawImage(bim,0,0,this);
+    }
+}
+
+class colorFreq {
+    Color c;
+    int count = 0;
+    colorFreq(Color clr){
+        c = clr;
+        count++;
+    }
+    public void incrCount(){
+        count++;
     }
 }
