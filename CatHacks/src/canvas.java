@@ -14,11 +14,11 @@ public class canvas extends JFrame {
     private JPanel controls = new JPanel();
     private JPanel imageBoard = new JPanel();
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private Color bg = new Color(178, 213,224);
+    private Color bg = new Color(178, 213, 224);
     private BufferedImage image;
     private MyImageObj pbnImage = new MyImageObj(), usrImg = new MyImageObj();
 
-    public canvas(){
+    public canvas() {
         super("Paint by number");
         buildMenus();
 
@@ -30,23 +30,25 @@ public class canvas extends JFrame {
         setControls();
         imageDisplay();
     }
-    public void imageDisplay(){
-        GridLayout gl = new GridLayout(1,2);
+
+    public void imageDisplay() {
+        GridLayout gl = new GridLayout(1, 2);
         gl.setHgap(200);
         imageBoard.setBackground(bg);
-        imageBoard.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight() - 50);
-        imageBoard.setBorder(BorderFactory.createEmptyBorder(15,50,15,50));
+        imageBoard.setSize((int) screenSize.getWidth(), usrImg.getHeight());
+        imageBoard.setBorder(BorderFactory.createEmptyBorder(15, 50, 15, 50));
         imageBoard.setLayout(gl);
-
         // add images to panel here
+
         imageBoard.add(usrImg);
         imageBoard.add(pbnImage);
     }
-    public void setControls(){
+
+    public void setControls() {
         GridLayout gl = new GridLayout(2, 1);
         gl.setVgap(15);
         controls.setLayout(gl);
-        controls.setBorder(BorderFactory.createEmptyBorder(15,50,15,50));
+        controls.setBorder(BorderFactory.createEmptyBorder(15, 50, 15, 50));
         controls.setSize((int) screenSize.getWidth(), 50);
         controls.setBackground(bg);
         JSlider numValues = new JSlider();
@@ -82,78 +84,78 @@ public class canvas extends JFrame {
         buttons.add(invertColors);
         buttons.add(reset);
         controls.add(buttons);
-
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //pbnImage.setImage(usrImg.getImage());
                 pbnImage.reset();
-                pbnImage.getPalette(5);
-                //pbnImage.randomThreshHold(numValues.getValue());
-                //pbnImage.thresholdImage(numValues.getValue());
-                //pbnImage.grayscaleImage();
-                pbnImage.posterize(numValues.getValue());
-                //pbnImage.detectEdges();
-                //pbnImage.thresholdImage(2);
-                //pbnImage.invertImage();
-            }
-        });
-        blur.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pbnImage.blurImage();
-            }
-        });
-        sharpen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pbnImage.sharpen();
-            }
-        });
-        grayScale.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                pbnImage.setColors(numValues.getValue());
                 pbnImage.grayscaleImage();
-            }
-        });
-        detectEdges.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                pbnImage.thresholdImage(numValues.getValue());
                 pbnImage.detectEdges();
+                pbnImage.invertImage();
+                pbnImage.defineLines();
             }
         });
+
+        blur.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               pbnImage.blurImage();
+           }
+       });
+        sharpen.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              pbnImage.sharpen();
+          }
+      });
+        grayScale.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            pbnImage.grayscaleImage();
+        }
+      });
+        detectEdges.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              pbnImage.detectEdges();
+          }
+      });
         posterize.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pbnImage.posterize(numValues.getValue());
-            }
-        });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            pbnImage.posterize(numValues.getValue());
+        }
+    });
         threshold.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                pbnImage.setColors(numValues.getValue());
                 pbnImage.thresholdImage(numValues.getValue());
             }
         });
         randomThreshold.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pbnImage.randomThreshHold(numValues.getValue());
-            }
-        });
-        invertColors.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pbnImage.invertImage();
-            }
-        });
-        reset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pbnImage.reset();
-            }
-        });
-    }
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              pbnImage.setColors(numValues.getValue());
+              pbnImage.randomThreshHold(numValues.getValue());
+          }
+      });
+        invertColors.addActionListener(new
 
+   ActionListener() {
+       @Override
+       public void actionPerformed(ActionEvent e) {
+           pbnImage.invertImage();
+       }
+   });
+        reset.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            pbnImage.reset();
+        }
+    });
+    }
     public void buildMenus(){
         final JFileChooser fc = new JFileChooser(".");
         JMenuBar bar = new JMenuBar();
