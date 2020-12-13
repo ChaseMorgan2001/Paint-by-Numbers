@@ -229,6 +229,8 @@ public class canvas extends JFrame {
                                     g2d.dispose();
 
                                     pbnImage.setImage(resizedImage);
+                                    pbnImage.setColors(13);
+                                    pbnImage.setRenderColors();
                                 //}
                             }
                             else {
