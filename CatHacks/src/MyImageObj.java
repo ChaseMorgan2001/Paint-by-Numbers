@@ -6,21 +6,17 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
 public class MyImageObj extends JLabel {
     private BufferedImage bim = null, og = null;
-    private int numExports = 0;
+    private boolean renderColors = false;
 
     private ArrayList<Color> colors;
 
     MyImageObj(){}
 
-    public void setNumExports(int n){
-        numExports = n;
-    }
     public void setImage(BufferedImage img){
         if(img == null){
             return;
@@ -39,6 +35,7 @@ public class MyImageObj extends JLabel {
         return bim;
     }
 
+    public void setRenderColors(){ renderColors = true; }
     public void blurImage(){
         float[] matrix = {
                 0.111f, 0.111f, 0.111f,
@@ -191,7 +188,9 @@ public class MyImageObj extends JLabel {
             System.out.println(colors.get(n).getRed() + ", " + colors.get(n).getGreen() + ", " + colors.get(n).getBlue());
         }
     }
-
+    public ArrayList<Color> getColors(){
+        return (ArrayList<Color>) colors.clone();
+    }
     public ArrayList<Color> getDominantColors(int i){
         ArrayList<Color> colors = new ArrayList<>();
         ArrayList<Color> mainColors = new ArrayList<>();
@@ -235,6 +234,17 @@ public class MyImageObj extends JLabel {
         }
         System.out.println("found main colors");
         return mainColors;
+    }
+
+    public void drawColors(Graphics2D g){
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        ArrayList<Color> mainColors = getColors();
+        int cellSize = ((int)(screenSize.getWidth() / 2 - 100) / mainColors.size());
+        for (int i = 0; i < mainColors.size(); i++){
+            int x = i * cellSize, y = (int) (screenSize.getHeight() - 235);
+            g.setColor(mainColors.get(i));
+            g.fillRect(x, y, cellSize, 15);
+        }
     }
 
     public void randomThreshHold(int i){
@@ -310,6 +320,7 @@ public class MyImageObj extends JLabel {
 
     public void reset(){
         setImage(og);
+        renderColors = false;
     }
 
     public void paintComponent(Graphics g){
@@ -318,5 +329,8 @@ public class MyImageObj extends JLabel {
         g.clearRect(0,0,getWidth(),getHeight());
 
         big.drawImage(bim,0,0,this);
+        if (renderColors) {
+            drawColors(big);
+        }
     }
 }
