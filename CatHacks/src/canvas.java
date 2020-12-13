@@ -18,7 +18,6 @@ public class canvas extends JFrame {
     private Color bg = new Color(178, 213, 224);
     private BufferedImage image;
     private MyImageObj pbnImage = new MyImageObj(), usrImg = new MyImageObj();
-    public int numExports = 0;
 
     public canvas() {
         super("Paint by number");
@@ -62,7 +61,7 @@ public class canvas extends JFrame {
         numValues.setMajorTickSpacing(1);
         numValues.setBackground(bg);
         controls.add(numValues);
-        JButton start = new JButton("Start");
+        JButton start = new JButton("Paint by Numbers");
         JButton blur = new JButton("Blur");
         JButton sharpen = new JButton("Sharpen");
         JButton grayScale = new JButton("Grayscale");
@@ -98,8 +97,10 @@ public class canvas extends JFrame {
                 pbnImage.detectEdges();
                 pbnImage.grayscaleImage();
                 pbnImage.invertImage();
+                pbnImage.setRenderColors();
                 //pbnImage.defineLines();
                 //pbnImage.sharpen();
+                repaint();
             }
         });
 
@@ -107,64 +108,86 @@ public class canvas extends JFrame {
            @Override
            public void actionPerformed(ActionEvent e) {
                pbnImage.blurImage();
+               pbnImage.setColors(numValues.getValue());
+               pbnImage.setRenderColors();
+               repaint();
            }
        });
         sharpen.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
               pbnImage.sharpen();
+              pbnImage.setColors(numValues.getValue());
+              pbnImage.setRenderColors();
+              repaint();
           }
       });
         grayScale.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             pbnImage.grayscaleImage();
+            pbnImage.setColors(numValues.getValue());
+            pbnImage.setRenderColors();
+            repaint();
         }
       });
         detectEdges.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
               pbnImage.detectEdges();
+              pbnImage.setColors(numValues.getValue());
+              pbnImage.setRenderColors();
+              repaint();
           }
       });
         posterize.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //pbnImage.setColors(numValues.getValue());
             pbnImage.posterize(numValues.getValue());
+            pbnImage.setColors(numValues.getValue());
+            pbnImage.setRenderColors();
+            repaint();
         }
     });
         threshold.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pbnImage.setColors(numValues.getValue());
+                pbnImage.setRenderColors();
                 pbnImage.thresholdImage(numValues.getValue());
+                repaint();
             }
         });
         randomThreshold.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-              //pbnImage.setColors(numValues.getValue());
               pbnImage.randomThreshHold(numValues.getValue());
+              pbnImage.setColors(numValues.getValue());
+              pbnImage.setRenderColors();
+              repaint();
           }
       });
         invertColors.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(ActionEvent e) {
            pbnImage.invertImage();
+           pbnImage.setColors(numValues.getValue());
+           pbnImage.setRenderColors();
+           repaint();
        }
    });
         reset.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             pbnImage.reset();
+            pbnImage.setColors(numValues.getValue());
+            pbnImage.setRenderColors();
+            repaint();
         }
     });
         export.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                numExports++;
-                pbnImage.setNumExports(numExports);
                 pbnImage.export();
             }
         });
@@ -191,21 +214,39 @@ public class canvas extends JFrame {
                             pbnImage.setImage(image);
 
                             // resize the image
-                            if(usrImg.getImage().getWidth() < (screenSize.getWidth()/2) - 100 || usrImg.getImage().getWidth() > (screenSize.getWidth()/2) - 100){
-                                double ratio = (screenSize.getWidth()/2 - 100 )/ usrImg.getImage().getWidth();
-                                //double ratio = usrImg.getImage().getWidth()/usrImg.getImage().getHeight();
-                                BufferedImage resizedImage = new BufferedImage((int)screenSize.getWidth()/2 - 100, (int)(usrImg.getImage().getHeight()*ratio), usrImg.getImage().getType());
+                            if (usrImg.getImage().getHeight() < usrImg.getImage().getWidth()) {
+                                //if (usrImg.getImage().getWidth() < (screenSize.getWidth() / 2) - 100 || usrImg.getImage().getWidth() > (screenSize.getWidth() / 2) - 100) {
+                                    double ratio = (screenSize.getWidth() / 2 - 100) / usrImg.getImage().getWidth();
+                                    BufferedImage resizedImage = new BufferedImage((int) screenSize.getWidth() / 2 - 100, (int) (usrImg.getImage().getHeight() * ratio), usrImg.getImage().getType());
+                                    Graphics2D g2d = (Graphics2D) resizedImage.getGraphics();
+                                    g2d.drawImage(image, 0, 0, (int) screenSize.getWidth() / 2 - 100, (int) (usrImg.getImage().getHeight() * ratio), null);
+                                    g2d.dispose();
+                                    usrImg.setImage(resizedImage);
+
+                                    resizedImage = new BufferedImage(usrImg.getImage().getWidth(), usrImg.getImage().getHeight(), usrImg.getImage().getType());
+                                    g2d = (Graphics2D) resizedImage.getGraphics();
+                                    g2d.drawImage(image, 0, 0, usrImg.getImage().getWidth(), usrImg.getImage().getHeight(), null);
+                                    g2d.dispose();
+
+                                    pbnImage.setImage(resizedImage);
+                                //}
+                            }
+                            else {
+                                double ratio = (screenSize.getHeight() - 220) / usrImg.getImage().getHeight();
+                                BufferedImage resizedImage = new BufferedImage((int) (usrImg.getImage().getWidth() * ratio), (int) (screenSize.getHeight() - 220), usrImg.getImage().getType());
                                 Graphics2D g2d = (Graphics2D) resizedImage.getGraphics();
-                                g2d.drawImage(image,0,0,(int)screenSize.getWidth()/2 - 100,(int)(usrImg.getImage().getHeight()*ratio),null);
+                                g2d.drawImage(image, 0, 0, (int) (usrImg.getImage().getWidth() * ratio), (int) (screenSize.getHeight() - 220), null);
                                 g2d.dispose();
                                 usrImg.setImage(resizedImage);
 
                                 resizedImage = new BufferedImage(usrImg.getImage().getWidth(), usrImg.getImage().getHeight(), usrImg.getImage().getType());
                                 g2d = (Graphics2D) resizedImage.getGraphics();
-                                g2d.drawImage(image,0,0,usrImg.getImage().getWidth(),usrImg.getImage().getHeight(),null);
+                                g2d.drawImage(image, 0, 0, usrImg.getImage().getWidth(), usrImg.getImage().getHeight(), null);
                                 g2d.dispose();
 
                                 pbnImage.setImage(resizedImage);
+                                pbnImage.setColors(13);
+                                pbnImage.setRenderColors();
                             }
 
                             usrImg.repaint();
