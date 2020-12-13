@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+
 public class canvas extends JFrame {
     private Container c = getContentPane();
     private JPanel controls = new JPanel();
@@ -17,6 +18,7 @@ public class canvas extends JFrame {
     private Color bg = new Color(178, 213, 224);
     private BufferedImage image;
     private MyImageObj pbnImage = new MyImageObj(), usrImg = new MyImageObj();
+    public int numExports = 0;
 
     public canvas() {
         super("Paint by number");
@@ -53,8 +55,8 @@ public class canvas extends JFrame {
         controls.setBackground(bg);
         JSlider numValues = new JSlider();
         numValues.setMinimum(2);
-        numValues.setMaximum(64);
-        numValues.setValue(8);
+        numValues.setMaximum(24);
+        numValues.setValue(13);
         numValues.setPaintLabels(true);
         numValues.setPaintTicks(true);
         numValues.setMajorTickSpacing(1);
@@ -70,6 +72,7 @@ public class canvas extends JFrame {
         JButton randomThreshold = new JButton("Random Threshold");
         JButton invertColors = new JButton("Invert Colors");
         JButton reset = new JButton("Reset");
+        JButton export = new JButton("Export");
 
         JPanel buttons = new JPanel();
         buttons.setBackground(bg);
@@ -83,17 +86,20 @@ public class canvas extends JFrame {
         buttons.add(randomThreshold);
         buttons.add(invertColors);
         buttons.add(reset);
+        buttons.add(export);
         controls.add(buttons);
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pbnImage.reset();
                 pbnImage.setColors(numValues.getValue());
-                pbnImage.grayscaleImage();
                 pbnImage.thresholdImage(numValues.getValue());
+                //pbnImage.blurImage();
                 pbnImage.detectEdges();
+                pbnImage.grayscaleImage();
                 pbnImage.invertImage();
-                pbnImage.defineLines();
+                //pbnImage.defineLines();
+                //pbnImage.sharpen();
             }
         });
 
@@ -124,6 +130,7 @@ public class canvas extends JFrame {
         posterize.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            //pbnImage.setColors(numValues.getValue());
             pbnImage.posterize(numValues.getValue());
         }
     });
@@ -137,13 +144,11 @@ public class canvas extends JFrame {
         randomThreshold.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-              pbnImage.setColors(numValues.getValue());
+              //pbnImage.setColors(numValues.getValue());
               pbnImage.randomThreshHold(numValues.getValue());
           }
       });
-        invertColors.addActionListener(new
-
-   ActionListener() {
+        invertColors.addActionListener(new ActionListener() {
        @Override
        public void actionPerformed(ActionEvent e) {
            pbnImage.invertImage();
@@ -155,6 +160,14 @@ public class canvas extends JFrame {
             pbnImage.reset();
         }
     });
+        export.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                numExports++;
+                pbnImage.setNumExports(numExports);
+                pbnImage.export();
+            }
+        });
     }
     public void buildMenus(){
         final JFileChooser fc = new JFileChooser(".");
