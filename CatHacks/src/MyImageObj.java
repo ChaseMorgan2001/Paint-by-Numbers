@@ -1,18 +1,26 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class MyImageObj extends JLabel {
     private BufferedImage bim = null, og = null;
+    private int numExports = 0;
 
     private ArrayList<Color> colors;
 
     MyImageObj(){}
 
+    public void setNumExports(int n){
+        numExports = n;
+    }
     public void setImage(BufferedImage img){
         if(img == null){
             return;
@@ -43,7 +51,7 @@ public class MyImageObj extends JLabel {
                 0.107973f,	0.468592f,	0.107973f,
                 0.024879f,	0.107973f,	0.024879f
         };
-        BufferedImageOp op = new ConvolveOp(new Kernel(3,3,gauss));
+        BufferedImageOp op = new ConvolveOp(new Kernel(3,3,matrix));
         BufferedImage temp = new BufferedImage(bim.getWidth(), bim.getHeight(), bim.getType());
         op.filter(bim,temp);
         bim = temp;
@@ -140,12 +148,26 @@ public class MyImageObj extends JLabel {
                 int rgba = bim.getRGB(x, y);
                 Color col = new Color(rgba, true);
                 if (col.getRGB() != Color.WHITE.getRGB()){
-                    col = Color.black;
+                    col = Color.gray;
                 }
                 bim.setRGB(x, y, col.getRGB());
             }
         }
         repaint();
+    }
+
+    public void export(){
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showSaveDialog(this.getParent());
+        if(option == JFileChooser.APPROVE_OPTION) {
+            File outputImage = new File(fileChooser.getSelectedFile() + ".jpeg");
+            // File outputImage = new File("/Exports/outputImage" + numExports + ".jpeg");
+            try {
+                ImageIO.write(bim, "jpg", outputImage);
+            } catch (IOException x) {
+                x.printStackTrace();
+            }
+        }
     }
 
     public void invertImage() {
@@ -164,7 +186,7 @@ public class MyImageObj extends JLabel {
 
     public void setColors(int i) {
         colors = getDominantColors(i);
-        System.out.println(Color.YELLOW.getRed() + ", " + Color.YELLOW.getGreen() + ", " + Color.YELLOW.getBlue());
+       // System.out.println(Color.YELLOW.getRed() + ", " + Color.YELLOW.getGreen() + ", " + Color.YELLOW.getBlue());
         for (int n = 0; n < colors.size(); n++){
             System.out.println(colors.get(n).getRed() + ", " + colors.get(n).getGreen() + ", " + colors.get(n).getBlue());
         }
@@ -205,10 +227,10 @@ public class MyImageObj extends JLabel {
                     m = howMuch.get(k);
                 }
             }
-            if(howMuch.indexOf(m) != -1){
+            if(howMuch.contains(m)){
                 mainColors.add(colors.get(howMuch.indexOf(m)));
                 colors.remove(howMuch.indexOf(m));
-                howMuch.remove(howMuch.indexOf(m));
+                howMuch.remove((Integer) m);
             }
         }
         System.out.println("found main colors");
@@ -249,7 +271,7 @@ public class MyImageObj extends JLabel {
         }
         repaint();
     }
-    
+
     public void grayscaleImage(){
         for (int x = 0; x < bim.getWidth(); x++) {
             for (int y = 0; y < bim.getHeight(); y++) {
