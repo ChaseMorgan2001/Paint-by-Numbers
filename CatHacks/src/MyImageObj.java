@@ -239,9 +239,9 @@ public class MyImageObj extends JLabel {
     public void drawColors(Graphics2D g){
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         ArrayList<Color> mainColors = getColors();
-        int cellSize = ((int)(screenSize.getWidth() / 2 - 100) / mainColors.size());
         for (int i = 0; i < mainColors.size(); i++){
-            int x = i * cellSize, y = (int) (screenSize.getHeight() - 235);
+            int cellSize = (int)(screenSize.getWidth() / 2 - 150)/ 24;
+            int x = i * cellSize, y = (int)(screenSize.getHeight() - 235);
             g.setColor(mainColors.get(i));
             g.fillRect(x, y, cellSize, 15);
         }
