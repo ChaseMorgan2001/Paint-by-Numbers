@@ -1,4 +1,4 @@
-# CatHacksWinter2020
+# Paint by Numbers
 This project won third place overall in the CatHacks Winter 2020 hackathon
 
 How to build:
